@@ -9,6 +9,7 @@ pipeline {
     parameters{ 
         choice(name: 'ENVIRONMENT', choices: ['dev', 'qa', 'uat', 'prod', 'pre-prod'], description: 'select your environment')  
         string(name: 'VERSION', description: 'Enter Your App Version') 
+        string(name: 'jira-id', description: 'Enter Your jira-id') 
     } 
     environment{
         appVersion = ''  // we can use this env variables across the pipeline 
@@ -25,6 +26,32 @@ pipeline {
                     environment = params.ENVIRONMENT
                     appVersion = params.VERSION 
                     account_id = pipelineGlobals.getAccountID(environment) 
+                }
+            }
+        }
+        stage('Integration tests') {
+            when {
+                expression {params.ENVIRONMENT == 'qa'}
+            }
+            steps{
+                script{
+                    sh """
+                        echo "run integration tests"
+                    """
+                }
+            }
+        }
+        stage('check JIRA') {
+            when {
+                expression {params.ENVIRONMENT == 'prod'}
+            }
+            steps {
+                script {
+                    sh """
+                        echo "check jira status"
+                        echo "check jira deployment window"
+                        echo "fail pipeline if above two are not true"
+                    """
                 }
             }
         }
