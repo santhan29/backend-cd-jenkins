@@ -13,7 +13,7 @@ pipeline {
     environment{
         appVersion = ''  // we can use this env variables across the pipeline 
         region = 'us-east-1' 
-        account_id = '361769595563'
+        account_id = ''
         project = 'expense'
         environment = ''
         component = 'backend'
@@ -24,6 +24,7 @@ pipeline {
                 script{
                     environment = params.ENVIRONMENT
                     appVersion = params.VERSION 
+                    account_id = pipelineGlobals.getAccountID(environment) 
                 }
             }
         }
